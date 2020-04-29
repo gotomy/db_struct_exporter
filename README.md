@@ -29,7 +29,7 @@ Options:
 
 - 计划支持导出的文件类型：
 - [x] excel文件
-- [ ] markdown文件
+- [x] markdown文件
 - [ ] pdf文件
 - [ ] online直接上线浏览表结构方式
 
@@ -38,11 +38,13 @@ Options:
 ## excel导出
 
 ```
-go run cmd/main.go -extype xlsx -h localhost:3306 -u root -p root -db boss -dsfile test.xlsx
+go run cmd/main.go -extype xlsx -h localhost:3306 -u root -p root -db test -dsfile test.xlsx
 ```
 ## markdown导出
 
-TODO 
+```
+go run cmd/main.go -extype md -h localhost:3306 -u root -p root -db test -dsfile test.md
+``` 
 
 ## pdf导出
 

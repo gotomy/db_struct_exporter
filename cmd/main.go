@@ -53,24 +53,11 @@ func main() {
 		return
 	}
 
-	switch extype {
-	case xlsx:
-		xlsxExport()
-	case md:
-
-	case pdf:
-
-	default:
-		fmt.Printf("the export type of %s is not supported\n", extype)
-	}
-
-}
-
-func xlsxExport() {
-	if xlsxValid() {
-		fmt.Printf("xlsx export param invalid, please check\n")
+	if connectValid() {
+		fmt.Printf("db connect params is invalid, please check\n")
 		return
 	}
+
 	datasource := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", u, p, h, db)
 	datadb, err := sql.Open("mysql", datasource)
 	defer datadb.Close()
@@ -82,10 +69,29 @@ func xlsxExport() {
 	importer := importer.NewMysqlImporter(datadb, db)
 	importer.Importer()
 
-	excelExport := exporter.NewExcelExport(dsfile)
-	excelExport.Exporter(importer.ExportTables)
+	switch extype {
+	case xlsx:
+		xlsxExport(importer)
+	case md:
+		mdExport(importer)
+	case pdf:
+
+	default:
+		fmt.Printf("the export type of %s is not supported\n", extype)
+	}
+
 }
 
-func xlsxValid() bool {
-	return len(h) == 0 || len(u) == 0 || len(dsfile) == 0 || len(db) == 0
+func connectValid() bool {
+	return len(h) == 0 || len(u) == 0 || len(db) == 0
+}
+
+func xlsxExport(importer *importer.MysqlImporter) {
+	excelExporter := exporter.NewExcelExport(dsfile)
+	excelExporter.Exporter(importer.ExportTables)
+}
+
+func mdExport(importer *importer.MysqlImporter)  {
+	mdExporter := exporter.NewMarkdownExporter(dsfile, db)
+	mdExporter.Exporter(importer.ExportTables)
 }
