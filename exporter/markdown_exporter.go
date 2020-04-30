@@ -5,6 +5,7 @@ import (
 	"db_struct_exporter/model"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -55,9 +56,11 @@ func (export *MarkDownExporter) renderTableSection(table *model.Table) string {
 	var tableColumns []string
 	for _, column := range table.Columns {
 		ts := TplTableColumnParam
+		ts = strings.Replace(ts, "{order}", strconv.Itoa(int(column.Order)), 1)
 		ts = strings.Replace(ts, "{name}", column.Name, 1)
 		ts = strings.Replace(ts, "{type}", column.Type, 1)
 		ts = strings.Replace(ts, "{cannull}", column.CanNull, 1)
+		ts = strings.Replace(ts, "{default}", column.DefaultValue, 1)
 		// 处理comment的内部，将换行符替换成空格，有换行的情况下markdown table显示有异常
 		handleComment, _ := mergeLines(column.Comment)
 		ts = strings.Replace(ts, "{comment}", handleComment, 1)

@@ -4,9 +4,8 @@ type Index struct {
 	Order      int32
 	Name       string
 	Unique     bool
-	Type       string
-	ContainKey string
 	IndexType  string
+	ContainKey string
 	Comment    string
 }
 
