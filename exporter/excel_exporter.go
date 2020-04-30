@@ -51,6 +51,21 @@ func (export *ExcelExport) Exporter(exporterTables []*model.Table) {
 			excelFile.SetCellStyle(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), rowStyle)
 			rowIndex++
 		}
+
+		// 设置索引
+		export.buildTableIndex(excelFile, sheetName, rowIndex)
+		rowIndex++;
+		for _, column := range table.Indexes {
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), column.Order)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(2)+strconv.Itoa(rowIndex), column.Name)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(3)+strconv.Itoa(rowIndex), column.ContainKey)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(4)+strconv.Itoa(rowIndex), column.IndexType)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(5)+strconv.Itoa(rowIndex), column.Unique)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), column.Comment)
+			excelFile.SetCellStyle(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), rowStyle)
+			rowIndex++
+		}
+
 		rowIndex++;
 	}
 
@@ -80,6 +95,23 @@ func (export *ExcelExport) buildTableHeader(file *excelize.File, sheet string, r
 	}
 
 	for columnNum, v := range titles {
+		sheetPosition := ColumnIndexToLetter(columnNum+1) + strconv.Itoa(rowIndex)
+		file.SetCellValue(sheet, sheetPosition, v)
+	}
+
+	headerStyle, _ := file.NewStyle(`{"font":{"size":14},"fill":{"type":"pattern","color":["#9ACD32"],"pattern":1},"border":[{"type":"left","color":"000000","style":1},{"type":"top","color":"000000","style":1},{"type":"bottom","color":"000000","style":1},{"type":"right","color":"000000","style":1}]}`)
+	file.SetCellStyle(sheet, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), headerStyle)
+}
+
+/**
+ * 设置索引名
+ */
+func (export *ExcelExport) buildTableIndex(file *excelize.File, sheet string, rowIndex int) {
+	indexes := [] string{
+		"序号", "索引名称", "包含字段", "索引类型", "是否唯一", "描述",
+	}
+
+	for columnNum, v := range indexes {
 		sheetPosition := ColumnIndexToLetter(columnNum+1) + strconv.Itoa(rowIndex)
 		file.SetCellValue(sheet, sheetPosition, v)
 	}

@@ -15,5 +15,11 @@ const TplTableColumnParam = `|{order}   |{name}	    |{type}		|{cannull}		|{defau
 
 const TplTableIndex = `### 索引结构`
 
+const TplTableIndexTitle = `
+|序号		|索引名	    |包含字段    |索引类型	|是否唯一	|描述	   |
+|-----------|-----------|-----------|-----------|-----------|----------|
+{params}`
+
+const TplTableIndexParam = `|{order}   |{name}	    |{keys}    |{type}		|{unique}	  |{comment}	   |`
 
 const TplTableSql = `### 建表语句`

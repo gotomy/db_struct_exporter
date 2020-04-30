@@ -71,6 +71,19 @@ func (export *MarkDownExporter) renderTableSection(table *model.Table) string {
 	tableSection = append(tableSection, strings.Replace(TplTableColumnTitle, "{params}", tableContent, 1))
 
 	tableSection = append(tableSection, TplTableIndex)
+	var tableIndex []string
+	for _, index :=range table.Indexes {
+		ts := TplTableIndexParam
+		ts = strings.Replace(ts, "{order}", strconv.Itoa(int(index.Order)) ,1)
+		ts = strings.Replace(ts, "{name}", index.Name ,1)
+		ts = strings.Replace(ts, "{keys}", index.ContainKey, 1)
+		ts = strings.Replace(ts, "{type}", index.IndexType ,1)
+		ts = strings.Replace(ts, "{unique}", strconv.FormatBool(index.Unique) ,1)
+		ts = strings.Replace(ts, "{comment}", index.Comment ,1)
+		tableIndex = append(tableIndex, ts)
+	}
+	tableIndexContent := strings.Join(tableIndex, "\n")
+	tableSection = append(tableSection, strings.Replace(TplTableIndexTitle, "{params}", tableIndexContent, 1))
 
 	tableSection = append(tableSection, TplTableSql)
 	tableSection = append(tableSection, "```", table.Sql, "```")
