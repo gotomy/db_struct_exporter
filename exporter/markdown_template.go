@@ -2,7 +2,7 @@ package exporter
 
 const TplTitle = `# {dbname}数据库表结构`
 
-const TplTableSection = `## 表名：{tablename}，描述：`
+const TplTableSection = `## 表名：{tablename}，描述：{tablecomment}，字符集：{charset}，引擎：{engine}`
 
 const TplTableTitle = `### 表结构`
 

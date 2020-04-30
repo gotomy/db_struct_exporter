@@ -32,12 +32,9 @@ func NewMysqlImporter(db *sql.DB, dbName string) *MysqlImporter {
 }
 
 func (export *MysqlImporter) Importer() {
-	tables, err := export.tables()
+	err := export.tables()
 	if err != nil {
-
-	}
-	for _, table := range tables {
-		export.ExportTables = append(export.ExportTables, &model.Table{Name: table})
+		panic("get table info error")
 	}
 
 	// 获取表的创建语句
@@ -50,21 +47,21 @@ func (export *MysqlImporter) Importer() {
 /**
  * 获取数据库的所有表名
  */
-func (export *MysqlImporter) tables() ([]string, error) {
-	showTableSql := fmt.Sprintf("SHOW TABLES FROM %s", export.dbName)
-	rows, err := export.db.Query(showTableSql)
+func (export *MysqlImporter) tables() error {
+	selectTableSql := fmt.Sprintf("SELECT table_name,engine,table_collation,table_comment from information_schema.tables where table_schema = '%s'", export.dbName)
+	rows, err := export.db.Query(selectTableSql)
 	if err != nil {
 		fmt.Printf("get tables error: %s", err)
-		return nil, err
-	}
-	var tableName string
-	var tables []string
-	for rows.Next() {
-		rows.Scan(&tableName)
-		tables = append(tables, tableName)
+		return err
 	}
 
-	return tables, nil
+	for rows.Next() {
+		table := &model.Table{}
+		rows.Scan(&table.Name, &table.Engine, &table.Charset, &table.Comment)
+		export.ExportTables = append(export.ExportTables, table)
+	}
+
+	return nil
 }
 
 /**

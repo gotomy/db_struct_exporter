@@ -2,6 +2,7 @@ package exporter
 
 import (
 	"db_struct_exporter/model"
+	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"strconv"
 )
@@ -33,7 +34,7 @@ func (export *ExcelExport) Exporter(exporterTables []*model.Table) {
 
 	rowIndex := 1
 	for _, table := range exporterTables {
-		export.buildTableTitle(excelFile, sheetName, rowIndex, table.Name)
+		export.buildTableTitle(excelFile, sheetName, rowIndex, table.Name, table.Comment)
 		rowIndex++
 		export.buildTableHeader(excelFile, sheetName, rowIndex)
 		rowIndex++
@@ -57,10 +58,10 @@ func (export *ExcelExport) Exporter(exporterTables []*model.Table) {
 /**
   设置标题
  */
-func (export *ExcelExport) buildTableTitle(file *excelize.File, sheet string, rowIndex int, tableName string) {
+func (export *ExcelExport) buildTableTitle(file *excelize.File, sheet string, rowIndex int, tableName string, tableComment string) {
 	file.MergeCell(sheet, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(4)+strconv.Itoa(rowIndex))
 	titlePosition := ColumnIndexToLetter(1) + strconv.Itoa(rowIndex)
-	file.SetCellValue(sheet, titlePosition, "表名:"+tableName)
+	file.SetCellValue(sheet, titlePosition, fmt.Sprintf("表名：%s, 注释：%s", tableName, tableComment))
 
 	titleStyle, _ := file.NewStyle(`{"font":{"size":16},"fill":{"type":"pattern","color":["#9ACD32"],"pattern":1},"border":[{"type":"left","color":"000000","style":1},{"type":"top","color":"000000","style":1},{"type":"bottom","color":"000000","style":1},{"type":"right","color":"000000","style":1}]}`)
 	file.SetCellStyle(sheet, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(4)+strconv.Itoa(rowIndex), titleStyle)

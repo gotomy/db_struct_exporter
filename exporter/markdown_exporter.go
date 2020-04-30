@@ -44,8 +44,13 @@ func (export *MarkDownExporter) renderPageTitle() string {
 
 func (export *MarkDownExporter) renderTableSection(table *model.Table) string {
 	var tableSection []string
-	tableSection = append(tableSection, strings.Replace(TplTableSection, "{tablename}", table.Name, 1))
-	tableSection = append(tableSection, TplTableTitle)
+	ts := TplTableSection
+	ts = strings.Replace(ts, "{tablename}", table.Name, 1)
+	ts = strings.Replace(ts, "{tablecomment}", table.Comment, 1)
+	ts = strings.Replace(ts, "{charset}", table.Charset, 1)
+	ts = strings.Replace(ts, "{engine}", table.Engine, 1)
+
+	tableSection = append(tableSection, ts)
 
 	var tableColumns []string
 	for _, column := range table.Columns {
