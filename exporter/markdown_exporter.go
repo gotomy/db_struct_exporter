@@ -37,6 +37,16 @@ func (export *MarkDownExporter) Exporter(exporterTables []*model.Table) {
 
 }
 
+func (export *MarkDownExporter) ExporterJson(exporterTables []*model.Table) []byte {
+	var content []string
+	content = append(content, export.renderPageTitle())
+	for _, table := range exporterTables {
+		content = append(content, export.renderTableSection(table))
+	}
+	finalString := strings.Join(content, "\n")
+	return []byte(finalString)
+}
+
 func (export *MarkDownExporter) renderPageTitle() string {
 	ts := TplTitle
 	ts = strings.Replace(ts, "{dbname}", export.dbName, 1)
@@ -72,14 +82,14 @@ func (export *MarkDownExporter) renderTableSection(table *model.Table) string {
 
 	tableSection = append(tableSection, TplTableIndex)
 	var tableIndex []string
-	for _, index :=range table.Indexes {
+	for _, index := range table.Indexes {
 		ts := TplTableIndexParam
-		ts = strings.Replace(ts, "{order}", strconv.Itoa(int(index.Order)) ,1)
-		ts = strings.Replace(ts, "{name}", index.Name ,1)
+		ts = strings.Replace(ts, "{order}", strconv.Itoa(int(index.Order)), 1)
+		ts = strings.Replace(ts, "{name}", index.Name, 1)
 		ts = strings.Replace(ts, "{keys}", index.ContainKey, 1)
-		ts = strings.Replace(ts, "{type}", index.IndexType ,1)
-		ts = strings.Replace(ts, "{unique}", strconv.FormatBool(index.Unique) ,1)
-		ts = strings.Replace(ts, "{comment}", index.Comment ,1)
+		ts = strings.Replace(ts, "{type}", index.IndexType, 1)
+		ts = strings.Replace(ts, "{unique}", strconv.FormatBool(index.Unique), 1)
+		ts = strings.Replace(ts, "{comment}", index.Comment, 1)
 		tableIndex = append(tableIndex, ts)
 	}
 	tableIndexContent := strings.Join(tableIndex, "\n")

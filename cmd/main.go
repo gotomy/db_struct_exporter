@@ -14,6 +14,7 @@ const (
 	xlsx = "xlsx"
 	md   = "md"
 	pdf  = "pdf"
+	online = "online"
 )
 
 var (
@@ -24,6 +25,7 @@ var (
 	db     string
 	extype string
 	dsfile string
+	port   int
 )
 
 func init() {
@@ -32,8 +34,9 @@ func init() {
 	flag.StringVar(&u, "u", "", "the `username` of mysql")
 	flag.StringVar(&p, "p", "", "the `password` of mysql")
 	flag.StringVar(&db, "db", "", "the need export `database` of mysql")
-	flag.StringVar(&extype, "extype", "xlsx", "`export type`,only can: xlsx,md,pdf")
+	flag.StringVar(&extype, "extype", "xlsx", "`export type`,only can: xlsx,md,pdf,online")
 	flag.StringVar(&dsfile, "dsfile", "export.xlsx", "the destination of export `file`")
+	flag.IntVar(&port, "port", 8080, "the `server port` of online html view")
 
 	flag.Usage = usage
 }
@@ -77,6 +80,8 @@ func main() {
 		exp = exporter.NewMarkdownExporter(dsfile, db)
 	case pdf:
 		exp = exporter.NewPdfExporter(dsfile, db)
+	case online:
+		exp = exporter.NewOnlineExporter(db, port)
 	default:
 		fmt.Printf("the export type of %s is not supported\n", extype)
 	}
