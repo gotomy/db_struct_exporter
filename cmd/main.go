@@ -69,29 +69,21 @@ func main() {
 	importer := importer.NewMysqlImporter(datadb, db)
 	importer.Importer()
 
+	var exp exporter.Exporter
 	switch extype {
 	case xlsx:
-		xlsxExport(importer)
+		exp = exporter.NewExcelExport(dsfile)
 	case md:
-		mdExport(importer)
+		exp = exporter.NewMarkdownExporter(dsfile, db)
 	case pdf:
-
+		exp = exporter.NewPdfExporter(dsfile)
 	default:
 		fmt.Printf("the export type of %s is not supported\n", extype)
 	}
 
+	exp.Exporter(importer.ExportTables)
 }
 
 func connectValid() bool {
 	return len(h) == 0 || len(u) == 0 || len(db) == 0
-}
-
-func xlsxExport(importer *importer.MysqlImporter) {
-	excelExporter := exporter.NewExcelExport(dsfile)
-	excelExporter.Exporter(importer.ExportTables)
-}
-
-func mdExport(importer *importer.MysqlImporter)  {
-	mdExporter := exporter.NewMarkdownExporter(dsfile, db)
-	mdExporter.Exporter(importer.ExportTables)
 }
