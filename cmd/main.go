@@ -76,7 +76,7 @@ func main() {
 	case md:
 		exp = exporter.NewMarkdownExporter(dsfile, db)
 	case pdf:
-		exp = exporter.NewPdfExporter(dsfile)
+		exp = exporter.NewPdfExporter(dsfile, db)
 	default:
 		fmt.Printf("the export type of %s is not supported\n", extype)
 	}
