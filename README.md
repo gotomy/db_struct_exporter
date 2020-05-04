@@ -40,6 +40,7 @@ Options:
 ```
 go run cmd/main.go -extype xlsx -h localhost:3306 -u root -p root -db test -dsfile test.xlsx
 ```
+![excel](./images/xlsx.png)
 ## markdown导出
 
 ```
