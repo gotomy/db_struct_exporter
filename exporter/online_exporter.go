@@ -33,9 +33,9 @@ func (exporter *OnlineExporter) Exporter(exportTable []*model.Table) {
 		)))
 
 		tpl := template.New("")
-		tpl = tpl.Funcs(template.FuncMap{"unescaped": unescaped})
+
 		tpl, err := template.ParseFiles("./tpl/index.html")
-		err = tpl.Execute(w, string(output))
+		err = tpl.Execute(w, template.HTML(string(output)))
 		if err != nil {
 			panic(err)
 		}
@@ -48,5 +48,3 @@ func (exporter *OnlineExporter) Exporter(exportTable []*model.Table) {
 		panic(err)
 	}
 }
-
-func unescaped(x string) interface{} { return template.HTML(x) }

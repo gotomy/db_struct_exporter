@@ -2,9 +2,10 @@ package exporter
 
 const TplTitle = `# {dbname}数据库表结构`
 
-const TplTableSection = `## 表名：{tablename}，描述：{tablecomment}，字符集：{charset}，引擎：{engine}`
+const TplTableSection = `## 表名：{tablename}`
 
-const TplTableTitle = `### 表结构`
+const TplTableTip = `### 表结构
+描述：{tablecomment}，字符集：{charset}，引擎：{engine}`
 
 const TplTableColumnTitle = `
 |序号		|字段名称	|字段类型	|是否可空	|默认值	   |描述	        |

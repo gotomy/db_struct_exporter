@@ -31,7 +31,7 @@ Options:
 - [x] excel文件
 - [x] markdown文件
 - [x] pdf文件
-- [ ] online直接上线浏览表结构方式
+- [x] online直接上线浏览表结构方式
 
 
 
@@ -54,4 +54,6 @@ go run cmd/main.go -extype pdf -h localhost:3306 -u root -p root -db test -dsfil
  
 ## online在线浏览
 
-TODO
+```
+go run cmd/main.go -extype online -h localhost:3306 -u root -p root -db test -port 8080
+```
