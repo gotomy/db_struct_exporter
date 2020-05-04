@@ -46,15 +46,16 @@ go run cmd/main.go -extype xlsx -h localhost:3306 -u root -p root -db test -dsfi
 ```
 go run cmd/main.go -extype md -h localhost:3306 -u root -p root -db test -dsfile test.md
 ``` 
-
+![markdown](./images/md.png)
 ## pdf导出
 
 ```
 go run cmd/main.go -extype pdf -h localhost:3306 -u root -p root -db test -dsfile test.pdf
 ```
- 
+![pdf](./images/pdf.png)
 ## online在线浏览
 
 ```
 go run cmd/main.go -extype online -h localhost:3306 -u root -p root -db test -port 8080
 ```
+![online](./images/online.png)
