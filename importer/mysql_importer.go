@@ -82,7 +82,7 @@ func (export *MysqlImporter) tables() error {
 func (export *MysqlImporter) columns() {
 	var showColumnSql string
 	for _, item := range export.ExportTables {
-		showColumnSql = fmt.Sprintf("SHOW FULL COLUMNS FROM %s", item.Name)
+		showColumnSql = fmt.Sprintf("SHOW FULL COLUMNS FROM `%s`", item.Name)
 		rows, err := export.db.Query(showColumnSql)
 		if err != nil {
 			panic("show columns error")
