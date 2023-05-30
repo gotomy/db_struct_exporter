@@ -13,6 +13,7 @@ type Column struct {
 	Order        int32
 	Name         string
 	Type         string
+	Key          string
 	CanNull      string
 	DefaultValue string
 	Comment      string

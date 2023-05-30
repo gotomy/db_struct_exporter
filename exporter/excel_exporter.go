@@ -25,48 +25,49 @@ func (export *ExcelExport) Exporter(exporterTables []*model.Table) {
 	excelFile.SetActiveSheet(sheetIndex)
 
 	// 设置列宽
-	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(1), ColumnIndexToLetter(1), 15)
-	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(2), ColumnIndexToLetter(2), 35)
-	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(3), ColumnIndexToLetter(3), 20)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(1), ColumnIndexToLetter(1), 20)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(2), ColumnIndexToLetter(2), 20)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(3), ColumnIndexToLetter(3), 25)
 	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(4), ColumnIndexToLetter(4), 20)
 	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(5), ColumnIndexToLetter(5), 20)
-	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(6), ColumnIndexToLetter(6), 60)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(6), ColumnIndexToLetter(6), 15)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(7), ColumnIndexToLetter(7), 15)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(8), ColumnIndexToLetter(8), 15)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(9), ColumnIndexToLetter(9), 15)
+	excelFile.SetColWidth(sheetName, ColumnIndexToLetter(10), ColumnIndexToLetter(10), 15)
 
 	rowStyle, _ := excelFile.NewStyle(`{"font":{"size":12},"border":[{"type":"left","color":"000000","style":1},{"type":"top","color":"000000","style":1},{"type":"bottom","color":"000000","style":1},{"type":"right","color":"000000","style":1}]}`)
 
 	rowIndex := 1
+	export.buildTableHeader(excelFile, sheetName, rowIndex)
+	rowIndex++
 	for _, table := range exporterTables {
-		export.buildTableTitle(excelFile, sheetName, rowIndex, table.Name, table.Comment)
-		rowIndex++
-		export.buildTableHeader(excelFile, sheetName, rowIndex)
-		rowIndex++
+		//export.buildTableTitle(excelFile, sheetName, rowIndex, table.Name, table.Comment)
+		mergeBegin := rowIndex
 		for _, column := range table.Columns {
 			// 设置列值
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), column.Order)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(2)+strconv.Itoa(rowIndex), column.Name)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(3)+strconv.Itoa(rowIndex), column.Type)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(4)+strconv.Itoa(rowIndex), column.CanNull)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(5)+strconv.Itoa(rowIndex), column.DefaultValue)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), column.Comment)
-			excelFile.SetCellStyle(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), rowStyle)
+			key := ""
+			if "PRI" == column.Key {
+				key = "PK"
+			} else if "MUL" == column.Key {
+				key = "FK"
+			}
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), table.Comment)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(2)+strconv.Itoa(rowIndex), table.Name)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(3)+strconv.Itoa(rowIndex), column.Comment)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(4)+strconv.Itoa(rowIndex), column.Name)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(5)+strconv.Itoa(rowIndex), column.Type)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), column.CanNull)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(7)+strconv.Itoa(rowIndex), key)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(8)+strconv.Itoa(rowIndex), column.DefaultValue)
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(9)+strconv.Itoa(rowIndex), "")
+			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(10)+strconv.Itoa(rowIndex), "")
+			excelFile.SetCellStyle(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(10)+strconv.Itoa(rowIndex), rowStyle)
 			rowIndex++
 		}
-
-		// 设置索引
-		export.buildTableIndex(excelFile, sheetName, rowIndex)
-		rowIndex++;
-		for _, column := range table.Indexes {
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), column.Order)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(2)+strconv.Itoa(rowIndex), column.Name)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(3)+strconv.Itoa(rowIndex), column.ContainKey)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(4)+strconv.Itoa(rowIndex), column.IndexType)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(5)+strconv.Itoa(rowIndex), column.Unique)
-			excelFile.SetCellValue(sheetName, ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), column.Comment)
-			excelFile.SetCellStyle(sheetName, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), rowStyle)
-			rowIndex++
-		}
-
-		rowIndex++;
+		mergeEnd := rowIndex - 1
+		excelFile.MergeCell(sheetName, "A"+strconv.Itoa(mergeBegin), "A"+strconv.Itoa(mergeEnd))
+		excelFile.MergeCell(sheetName, "B"+strconv.Itoa(mergeBegin), "B"+strconv.Itoa(mergeEnd))
 	}
 
 	if err := excelFile.SaveAs(export.fileName); err != nil {
@@ -74,9 +75,11 @@ func (export *ExcelExport) Exporter(exporterTables []*model.Table) {
 	}
 }
 
-/**
-  设置标题
- */
+/*
+*
+
+	设置标题
+*/
 func (export *ExcelExport) buildTableTitle(file *excelize.File, sheet string, rowIndex int, tableName string, tableComment string) {
 	file.MergeCell(sheet, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex))
 	titlePosition := ColumnIndexToLetter(1) + strconv.Itoa(rowIndex)
@@ -86,12 +89,14 @@ func (export *ExcelExport) buildTableTitle(file *excelize.File, sheet string, ro
 	file.SetCellStyle(sheet, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), titleStyle)
 }
 
-/**
-  设置表头
- */
+/*
+*
+
+	设置表头
+*/
 func (export *ExcelExport) buildTableHeader(file *excelize.File, sheet string, rowIndex int) {
 	titles := []string{
-		"序号", "字段名称", "字段类型", "是否可空", "默认值", "描述",
+		"表", "表名", "字段", "字段名称", "类型", "是否允许为NULL", "Key", "默认值", "示例", "注释",
 	}
 
 	for columnNum, v := range titles {
@@ -99,15 +104,15 @@ func (export *ExcelExport) buildTableHeader(file *excelize.File, sheet string, r
 		file.SetCellValue(sheet, sheetPosition, v)
 	}
 
-	headerStyle, _ := file.NewStyle(`{"font":{"size":14},"fill":{"type":"pattern","color":["#9ACD32"],"pattern":1},"border":[{"type":"left","color":"000000","style":1},{"type":"top","color":"000000","style":1},{"type":"bottom","color":"000000","style":1},{"type":"right","color":"000000","style":1}]}`)
-	file.SetCellStyle(sheet, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), headerStyle)
+	//headerStyle, _ := file.NewStyle(`{"font":{"size":14},"fill":{"type":"pattern","color":["#9ACD32"],"pattern":1},"border":[{"type":"left","color":"000000","style":1},{"type":"top","color":"000000","style":1},{"type":"bottom","color":"000000","style":1},{"type":"right","color":"000000","style":1}]}`)
+	//file.SetCellStyle(sheet, ColumnIndexToLetter(1)+strconv.Itoa(rowIndex), ColumnIndexToLetter(6)+strconv.Itoa(rowIndex), headerStyle)
 }
 
 /**
  * 设置索引名
  */
 func (export *ExcelExport) buildTableIndex(file *excelize.File, sheet string, rowIndex int) {
-	indexes := [] string{
+	indexes := []string{
 		"序号", "索引名称", "包含字段", "索引类型", "是否唯一", "描述",
 	}
 
@@ -121,7 +126,7 @@ func (export *ExcelExport) buildTableIndex(file *excelize.File, sheet string, ro
 }
 
 /**
-  * 将列序号转换为excel的字母编号.
+ * 将列序号转换为excel的字母编号.
  */
 func ColumnIndexToLetter(columnIndex int) string {
 	var (
@@ -143,7 +148,7 @@ func ColumnIndexToLetter(columnIndex int) string {
 				temp = append(temp, k)
 			}
 			columnIndex = (columnIndex - k) / 26 //减去Num最后一位数的值，因为已经记录在temp中
-			if columnIndex <= 26 { //小于等于26直接进行匹配，不需要进行数据拆分
+			if columnIndex <= 26 {               //小于等于26直接进行匹配，不需要进行数据拆分
 				temp = append(temp, columnIndex)
 				break
 			}

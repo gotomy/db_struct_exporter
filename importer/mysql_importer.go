@@ -20,7 +20,7 @@ type ShowColumns struct {
 
 type ShowIndecies struct {
 	NonUnique    sql.NullInt32
-	IndexName      sql.NullString
+	IndexName    sql.NullString
 	SeqInIndex   sql.NullInt32
 	ColumnName   sql.NullString
 	IndexType    sql.NullString
@@ -100,6 +100,7 @@ func (export *MysqlImporter) columns() {
 				Name:         cols.Field.String,
 				Type:         cols.Type.String,
 				CanNull:      cols.Null.String,
+				Key:          cols.Key.String,
 				DefaultValue: cols.Default.String,
 				Comment:      cols.Comment.String,
 			}
@@ -131,7 +132,7 @@ func (export *MysqlImporter) indecies() {
 				fmt.Printf("index info error: %s", error)
 			}
 
-			index ++
+			index++
 			showIndex = append(showIndex, indexInfo)
 		}
 
@@ -157,7 +158,7 @@ func (export *MysqlImporter) indecies() {
 					Comment:    item.IndexComment.String,
 				}
 			}
-			index ++
+			index++
 		}
 
 		for _, v := range indexMap {
